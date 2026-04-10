@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fff5f8;
+            text-align: center;
+            color: #5a3e3e;
+            padding: 20px;
+        }
+        .bouquet-area {
+            min-height: 200px;
+            border: 2px dashed #ffb7c5;
+            border-radius: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+            padding: 20px;
+            background: white;
+        }
+        .flower-item {
+            font-size: 40px;
+            display: inline-block;
+            margin: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .flower-item:hover {
+            transform: scale(1.2);
+        }
+        #message {
+            font-style: italic;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        button {
+            background-color: #ffb7c5;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Happy Birthday! 🎂</h1>
+    <p>Click the flowers below to build your birthday bouquet:</p>
+
+    <div class="bouquet-area" id="bouquet">
+        </div>
+
+    <div class="garden">
+        <span class="flower-item" onclick="addFlower('🌹')">🌹</span>
+        <span class="flower-item" onclick="addFlower('🌻')">🌻</span>
+        <span class="flower-item" onclick="addFlower('🌷')">🌷</span>
+        <span class="flower-item" onclick="addFlower('🌸')">🌸</span>
+        <span class="flower-item" onclick="addFlower('🌼')">🌼</span>
+    </div>
+
+    <div id="message"></div>
+
+    <script>
+        function addFlower(emoji) {
+            const bouquet = document.getElementById('bouquet');
+            const newFlower = document.createElement('span');
+            newFlower.innerHTML = emoji;
+            newFlower.style.fontSize = "50px";
+            newFlower.style.margin = "5px";
+            bouquet.appendChild(newFlower);
+            
+            document.getElementById('message').innerText = "A new bloom for a beautiful day!";
+        }
+    </script>
+</body>
+</html>

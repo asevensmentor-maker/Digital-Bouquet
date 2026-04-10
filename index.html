@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Bouquet for You</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --accent-pink: #ffdae0;
+            --text-color: #4a4a4a;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        header {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        h1 {
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        /* The Bouquet Display Area */
+        #bouquet-display {
+            width: 90%;
+            max-width: 800px;
+            height: 350px;
+            margin: 40px 0;
+            border-radius: 30px;
+            background: radial-gradient(circle, #fff9fb 0%, #ffffff 100%);
+            border: 1px solid var(--accent-pink);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(255, 183, 197, 0.1);
+        }
+
+        /* The Garden (Selection Area) */
+        .garden-shelf {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin-bottom: 50px;
+        }
+
+        .sticker-wrapper {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .sticker-wrapper:hover {
+            transform: scale(1.1) rotate(3deg);
+        }
+
+        .flower-asset {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+            /* The Glossy Effect */
+        }
+
+        /* The Animated Flower in the Bouquet */
+        .collected-flower {
+            width: 120px;
+            height: 120px;
+            position: absolute;
+            animation: bloomIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));
+        }
+
+        @keyframes bloomIn {
+            0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        /* The Birthday Wish Pop-up */
+        #wish-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.95);
+            z-index: 100;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .wish-text {
+            max-width: 500px;
+            font-size: 1.5rem;
+            line-height: 1.6;
+            color: #d63384;
+        }
+
+        .counter {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Happy Birthday!</h1>
+        <p>Pick flowers to build your birthday bouquet</p>
+        <div class="counter" id="count-label">Flowers collected: 0 / 5</div>
+    </header>
+
+    <div id="bouquet-display">
+        <div id="empty-hint" style="color: #e0e0e0;">Your bouquet will grow here...</div>
+    </div>
+
+    <div class="garden-shelf">
+        <div class="sticker-wrapper" onclick="collectFlower('flower1.png')">
+            <img src="flower1.png" alt="Flower 1" class="flower-asset">
+        </div>
+        <div class="sticker-wrapper" onclick="collectFlower('flower2.png')">
+            <img src="flower2.png" alt="Flower 2" class="flower-asset">
+        </div>
+        <div class="sticker-wrapper" onclick="collectFlower('flower3.png')">
+            <img src="flower3.png" alt="Flower 3" class="flower-asset">
+        </div>
+        <div class="sticker-wrapper" onclick="collectFlower('flower4.png')">
+            <img src="flower4.png" alt="Flower 4" class="flower-asset">
+        </div>
+    </div>
+
+    <div id="wish-modal">
+        <h2 style="font-size: 3rem; margin-bottom: 0;">✨ Happy Birthday! ✨</h2>
+        <div class="wish-text">
+            <p>Every flower in this bouquet was picked with a special wish for you. May your year be as bright and beautiful as these blooms!</p>
+            <p style="font-size: 1.2rem; color: #555;">(I love you!)</p>
+        </div>
+        <button onclick="closeWish()" style="margin-top:30px; padding: 10px 20px; border-radius: 20px; border: 1px solid #ffdae0; cursor: pointer; background: white;">View Bouquet Again</button>
+    </div>
+
+    <script>
+        let count = 0;
+        const totalNeeded = 5;
+
+        function collectFlower(imgSrc) {
+            // Remove the hint text on first click
+            if (count === 0) {
+                document.getElementById('empty-hint').style.display = 'none';
+            }
+
+            count++;
+            document.getElementById('count-label').innerText = `Flowers collected: ${count} / ${totalNeeded}`;
+
+            const bouquet = document.getElementById('bouquet-display');
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.className = 'collected-flower';
+
+            // Randomize position within the bouquet area
+            const randomX = Math.floor(Math.random() * (bouquet.offsetWidth - 120));
+            const randomY = Math.floor(Math.random() * (bouquet.offsetHeight - 120));
+            const randomRot = Math.floor(Math.random() * 40) - 20;
+
+            img.style.left = randomX + 'px';
+            img.style.top = randomY + 'px';
+            img.style.transform = `rotate(${randomRot}deg)`;
+
+            bouquet.appendChild(img);
+
+            // Show the wish once the target is reached
+            if (count === totalNeeded) {
+                setTimeout(() => {
+                    document.getElementById('wish-modal').style.display = 'flex';
+                }, 800);
+            }
+        }
+
+        function closeWish() {
+            document.getElementById('wish-modal').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>

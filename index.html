@@ -14,108 +14,121 @@
             flex-direction: column;
             align-items: center;
             color: #4a4a4a;
+            overflow-x: hidden;
         }
 
-        header { margin-top: 20px; text-align: center; }
-        h1 { color: #d63384; font-size: 1.8rem; margin-bottom: 5px; }
-        .counter { color: #b19494; font-style: italic; }
+        header { margin-top: 30px; text-align: center; padding: 0 10px; }
+        h1 { color: #d63384; font-size: 1.6rem; margin-bottom: 5px; }
+        .counter { color: #b19494; font-style: italic; font-size: 0.9rem; }
 
-        /* The Main Bouquet Area */
+        /* The Bouquet Container */
         #bouquet-canvas {
-            width: 95%;
-            max-width: 450px;
-            height: 500px;
+            width: 90%;
+            max-width: 400px;
+            height: 480px;
             margin: 20px auto;
             position: relative;
             background: radial-gradient(circle, #ffffff 0%, #fff0f3 100%);
             border-radius: 40px;
-            overflow: hidden;
-            box-shadow: 0 15px 40px rgba(214, 51, 132, 0.1);
+            box-shadow: 0 15px 40px rgba(214, 51, 132, 0.12);
         }
 
-        /* The Wrapped Base (from your photo) */
+        /* The Checkered Wrap (Image you provided) */
         .bouquet-wrap {
             position: absolute;
-            bottom: -10px;
+            bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 280px;
-            z-index: 20; /* Stays in front of stems */
+            width: 100%; /* Adjust based on your image size */
+            z-index: 20; /* Keep wrap in FRONT of flower stems */
             pointer-events: none;
         }
 
-        /* Flower Styling */
+        /* Individual Flower Instances */
         .flower-instance {
             position: absolute;
-            width: 140px;
-            transition: all 0.5s ease-out;
-            z-index: 10;
+            width: 130px;
+            z-index: 10; /* Behind the front of the wrap */
             filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
-            animation: growIn 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: growIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
         @keyframes growIn {
-            0% { transform: scale(0) translateY(50px); opacity: 0; }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
+            0% { transform: scale(0) translateY(50px) rotate(-20deg); opacity: 0; }
+            100% { transform: scale(1) translateY(0) rotate(var(--r)); opacity: 1; }
         }
 
-        /* Selection Shelf */
+        /* Selection Shelf at Bottom */
         .shelf {
             display: flex;
-            gap: 15px;
-            padding: 15px 25px;
+            gap: 12px;
+            padding: 15px;
             background: white;
             border-radius: 50px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-            overflow-x: auto;
+            margin-bottom: 40px;
             max-width: 90%;
+            overflow-x: auto;
         }
 
         .flower-choice {
-            width: 70px;
-            height: 70px;
+            width: 65px;
+            height: 65px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: transform 0.3s;
             object-fit: contain;
         }
-        .flower-choice:hover { transform: translateY(-10px) scale(1.1); }
+        .flower-choice:hover { transform: scale(1.15); }
 
-        /* Romantic Wish Modal */
+        /* Romantic Modal */
         #wish-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.97);
+            background: rgba(255, 255, 255, 0.98);
             z-index: 100;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 20px;
-            animation: fadeIn 1.5s ease;
+            padding: 30px;
+            animation: fadeIn 1.2s ease;
         }
 
         .romantic-msg {
-            max-width: 500px;
+            max-width: 450px;
             color: #8c2f39;
             line-height: 1.8;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        button.close-btn {
+            margin-top: 25px;
+            padding: 10px 25px;
+            border-radius: 25px;
+            border: 1px solid #ffdae0;
+            background: white;
+            color: #d63384;
+            cursor: pointer;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>To My Most Beautiful Bloom</h1>
-        <div class="counter" id="tracker">Touch the flowers to grow your bouquet: 0 / 10</div>
+        <h1>A Bouquet for My Favorite Person</h1>
+        <div class="counter" id="tracker">Add 10 flowers to build your gift: 0 / 10</div>
     </header>
 
     <div id="bouquet-canvas">
-        <img src="https://i.ibb.co/VpyXmRG/pink-wrap.png" class="bouquet-wrap" alt="wrap">
-        <div id="hint" style="position:absolute; top:40%; width:100%; color:#d6b4b4;">Pick 10 flowers for a surprise...</div>
+        <img src="empty_wrap.png" class="bouquet-wrap" alt="Pink Wrap">
+        
+        <div id="hint" style="position:absolute; top:35%; width:100%; color:#d6b4b4; z-index: 30; font-size: 0.9rem;">
+            Pick a flower to start...
+        </div>
     </div>
 
     <div class="shelf">
@@ -126,13 +139,13 @@
     </div>
 
     <div id="wish-overlay">
-        <h2 style="font-size: 2.5rem; color: #d63384; margin-bottom: 10px;">Happy Birthday, My Love! ✨</h2>
+        <h2 style="font-size: 2.2rem; color: #d63384; margin-bottom: 15px;">Happy Birthday, My Love! ✨</h2>
         <div class="romantic-msg">
             <p>Just like this bouquet you built, our life together is a collection of beautiful moments, one by one. You are the grace in my world and the light in my days.</p>
             <p><strong>Keep blooming, keep shining, and never stop dreaming.</strong> You are capable of everything you imagine, and I am right here to walk every path with you.</p>
-            <p style="font-size: 1.5rem; margin-top: 20px;">❤️</p>
+            <p style="font-size: 1.6rem; margin-top: 15px;">🌹❤️🌹</p>
         </div>
-        <button onclick="document.getElementById('wish-overlay').style.display='none'" style="margin-top:20px; border:none; background:none; color:#aaa; cursor:pointer;">Close to see your bouquet</button>
+        <button class="close-btn" onclick="document.getElementById('wish-overlay').style.display='none'">See your creation</button>
     </div>
 
     <script>
@@ -152,25 +165,26 @@
             img.src = src;
             img.className = 'flower-instance';
 
-            // Positioning logic to create the "fan" shape of the bouquet
-            const centerX = canvas.offsetWidth / 2 - 70;
-            const randomX = centerX + (Math.random() * 200 - 100); // Spread center
-            const randomY = 100 + (Math.random() * 180); // Higher or lower in the wrap
-            const rotation = (randomX - centerX) / 2; // Tilt based on position
+            // Positioning within the neck of the wrap
+            const centerX = canvas.offsetWidth / 2 - 65;
+            const spreadX = (Math.random() * 160) - 80; // Horizontal spread
+            const spreadY = (Math.random() * 120) + 60; // Vertical placement inside wrap
+            const rotation = (spreadX / 3) + (Math.random() * 20 - 10); // Natural tilt
 
-            img.style.left = randomX + 'px';
-            img.style.top = randomY + 'px';
-            img.style.transform = `rotate(${rotation}deg)`;
+            img.style.left = (centerX + spreadX) + 'px';
+            img.style.top = spreadY + 'px';
+            img.style.setProperty('--r', rotation + 'deg');
             
-            // To ensure new flowers sometimes go behind or in front for depth
-            img.style.zIndex = Math.floor(Math.random() * 15);
+            // Randomize stacking order for depth
+            img.style.zIndex = Math.floor(Math.random() * 10) + 5;
 
-            canvas.appendChild(img);
+            // Insert BEFORE the wrap image so wrap is on top
+            canvas.insertBefore(img, canvas.querySelector('.bouquet-wrap'));
 
             if (count === maxFlowers) {
                 setTimeout(() => {
                     document.getElementById('wish-overlay').style.display = 'flex';
-                }, 1000);
+                }, 1200);
             }
         }
     </script>

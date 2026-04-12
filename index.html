@@ -3,160 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birthday Bouquet Builder</title>
+    <title>A Bouquet for My Love</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #fffafa;
+            font-family: 'Georgia', serif;
+            background: #fffcfc;
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: hidden;
-            text-align: center;
+            color: #4a4a4a;
         }
 
-        header { margin-top: 30px; }
-        h1 { color: #d63384; font-weight: 300; }
-        .counter { color: #888; margin-bottom: 10px; }
+        header { margin-top: 20px; text-align: center; }
+        h1 { color: #d63384; font-size: 1.8rem; margin-bottom: 5px; }
+        .counter { color: #b19494; font-style: italic; }
 
-        /* The Bouquet Area */
-        #bouquet-container {
-            width: 90%;
-            max-width: 500px;
-            height: 450px;
+        /* The Main Bouquet Area */
+        #bouquet-canvas {
+            width: 95%;
+            max-width: 450px;
+            height: 500px;
             margin: 20px auto;
             position: relative;
-            background: white;
-            border-radius: 30px;
-            border: 2px solid #ffdae0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            background: radial-gradient(circle, #ffffff 0%, #fff0f3 100%);
+            border-radius: 40px;
             overflow: hidden;
+            box-shadow: 0 15px 40px rgba(214, 51, 132, 0.1);
         }
 
-        /* The Vase */
-        .vase {
+        /* The Wrapped Base (from your photo) */
+        .bouquet-wrap {
             position: absolute;
-            bottom: 10px;
+            bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 150px;
-            z-index: 10; /* Vase stays in front of flower stems */
+            width: 280px;
+            z-index: 20; /* Stays in front of stems */
             pointer-events: none;
         }
 
-        /* Collected Flowers */
-        .collected-flower {
-            width: 130px;
+        /* Flower Styling */
+        .flower-instance {
             position: absolute;
-            animation: dropIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            z-index: 5; /* Behind the vase front */
+            width: 140px;
+            transition: all 0.5s ease-out;
+            z-index: 10;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+            animation: growIn 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
-        @keyframes dropIn {
-            0% { transform: translateY(-100px) scale(0); opacity: 0; }
-            100% { transform: translateY(0) scale(1); opacity: 1; }
+        @keyframes growIn {
+            0% { transform: scale(0) translateY(50px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
         }
 
         /* Selection Shelf */
-        .garden-shelf {
+        .shelf {
             display: flex;
             gap: 15px;
-            padding: 15px;
+            padding: 15px 25px;
             background: white;
             border-radius: 50px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-top: 20px;
-            margin-bottom: 40px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            overflow-x: auto;
+            max-width: 90%;
         }
 
-        .sticker-wrapper { cursor: pointer; transition: 0.3s; }
-        .sticker-wrapper:hover { transform: scale(1.1); }
-        .flower-asset { width: 70px; height: 70px; object-fit: contain; }
+        .flower-choice {
+            width: 70px;
+            height: 70px;
+            cursor: pointer;
+            transition: 0.3s;
+            object-fit: contain;
+        }
+        .flower-choice:hover { transform: translateY(-10px) scale(1.1); }
 
-        /* Wish Modal */
-        #wish-modal {
+        /* Romantic Wish Modal */
+        #wish-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.98);
+            background: rgba(255, 255, 255, 0.97);
             z-index: 100;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            animation: fadeIn 1s;
+            text-align: center;
+            padding: 20px;
+            animation: fadeIn 1.5s ease;
         }
+
+        .romantic-msg {
+            max-width: 500px;
+            color: #8c2f39;
+            line-height: 1.8;
+            font-size: 1.2rem;
+        }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Happy Birthday!</h1>
-        <p>Click the flowers to build your bouquet</p>
-        <div class="counter" id="count-label">Flowers: 0 / 5</div>
+        <h1>To My Most Beautiful Bloom</h1>
+        <div class="counter" id="tracker">Touch the flowers to grow your bouquet: 0 / 10</div>
     </header>
 
-    <div id="bouquet-container">
-        <img src="https://img.icons8.com/isometric/200/vase.png" class="vase" alt="vase">
-        <div id="empty-hint" style="margin-top: 150px; color: #ddd;">Click a flower below...</div>
+    <div id="bouquet-canvas">
+        <img src="https://i.ibb.co/VpyXmRG/pink-wrap.png" class="bouquet-wrap" alt="wrap">
+        <div id="hint" style="position:absolute; top:40%; width:100%; color:#d6b4b4;">Pick 10 flowers for a surprise...</div>
     </div>
 
-    <div class="garden-shelf">
-        <div class="sticker-wrapper" onclick="collectFlower('flower1.png')">
-            <img src="flower1.png" class="flower-asset">
-        </div>
-        <div class="sticker-wrapper" onclick="collectFlower('flower2.png')">
-            <img src="flower2.png" class="flower-asset">
-        </div>
-        <div class="sticker-wrapper" onclick="collectFlower('flower3.png')">
-            <img src="flower3.png" class="flower-asset">
-        </div>
-        <div class="sticker-wrapper" onclick="collectFlower('flower4.png')">
-            <img src="flower4.png" class="flower-asset">
-        </div>
+    <div class="shelf">
+        <img src="flower1.png" class="flower-choice" onclick="addFlower('flower1.png')">
+        <img src="flower2.png" class="flower-choice" onclick="addFlower('flower2.png')">
+        <img src="flower3.png" class="flower-choice" onclick="addFlower('flower3.png')">
+        <img src="flower4.png" class="flower-choice" onclick="addFlower('flower4.png')">
     </div>
 
-    <div id="wish-modal">
-        <h2 style="font-size: 2.5rem; color: #d63384;">Happy Birthday! ✨</h2>
-        <p style="font-size: 1.2rem; max-width: 80%;">Your beautiful bouquet is complete, just like my life with you.</p>
-        <button onclick="closeWish()" style="padding: 10px 20px; border-radius: 20px; border: 1px solid #ffb7c5; background: white; cursor: pointer;">View Bouquet</button>
+    <div id="wish-overlay">
+        <h2 style="font-size: 2.5rem; color: #d63384; margin-bottom: 10px;">Happy Birthday, My Love! ✨</h2>
+        <div class="romantic-msg">
+            <p>Just like this bouquet you built, our life together is a collection of beautiful moments, one by one. You are the grace in my world and the light in my days.</p>
+            <p><strong>Keep blooming, keep shining, and never stop dreaming.</strong> You are capable of everything you imagine, and I am right here to walk every path with you.</p>
+            <p style="font-size: 1.5rem; margin-top: 20px;">❤️</p>
+        </div>
+        <button onclick="document.getElementById('wish-overlay').style.display='none'" style="margin-top:20px; border:none; background:none; color:#aaa; cursor:pointer;">Close to see your bouquet</button>
     </div>
 
     <script>
         let count = 0;
-        const totalNeeded = 5;
+        const maxFlowers = 10;
 
-        function collectFlower(imgSrc) {
-            if (count === 0) document.getElementById('empty-hint').style.display = 'none';
+        function addFlower(src) {
+            if (count >= maxFlowers) return;
             
+            if (count === 0) document.getElementById('hint').style.display = 'none';
+
             count++;
-            document.getElementById('count-label').innerText = `Flowers: ${count} / ${totalNeeded}`;
+            document.getElementById('tracker').innerText = `Flowers: ${count} / ${maxFlowers}`;
 
-            const container = document.getElementById('bouquet-container');
+            const canvas = document.getElementById('bouquet-canvas');
             const img = document.createElement('img');
-            img.src = imgSrc;
-            img.className = 'collected-flower';
+            img.src = src;
+            img.className = 'flower-instance';
 
-            // Position flowers specifically to look like they are in the vase
-            // Spread them slightly left and right, but keep them centered
-            const randomX = Math.floor(Math.random() * 150) + (container.offsetWidth / 2 - 100);
-            const randomY = Math.floor(Math.random() * 100) + 50; // Keep them in the top half
-            const randomRot = Math.floor(Math.random() * 60) - 30;
+            // Positioning logic to create the "fan" shape of the bouquet
+            const centerX = canvas.offsetWidth / 2 - 70;
+            const randomX = centerX + (Math.random() * 200 - 100); // Spread center
+            const randomY = 100 + (Math.random() * 180); // Higher or lower in the wrap
+            const rotation = (randomX - centerX) / 2; // Tilt based on position
 
             img.style.left = randomX + 'px';
             img.style.top = randomY + 'px';
-            img.style.transform = `rotate(${randomRot}deg)`;
+            img.style.transform = `rotate(${rotation}deg)`;
+            
+            // To ensure new flowers sometimes go behind or in front for depth
+            img.style.zIndex = Math.floor(Math.random() * 15);
 
-            container.appendChild(img);
+            canvas.appendChild(img);
 
-            if (count === totalNeeded) {
-                setTimeout(() => { document.getElementById('wish-modal').style.display = 'flex'; }, 1000);
+            if (count === maxFlowers) {
+                setTimeout(() => {
+                    document.getElementById('wish-overlay').style.display = 'flex';
+                }, 1000);
             }
         }
-
-        function closeWish() { document.getElementById('wish-modal').style.display = 'none'; }
     </script>
 </body>
 </html>
